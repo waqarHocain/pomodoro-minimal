@@ -1,0 +1,156 @@
+(function() 
+{
+	// elems
+	var mins_container = document.querySelector(".mins"),
+		secs_container = document.querySelector(".secs");
+
+	var btn_start = document.querySelector(".start");
+
+
+	// Global vars
+	var mins, secs = 0;
+	var interval_timer;
+
+	var mins_def = 1;
+
+
+	var timer_running = false;
+
+	// bindings
+	window.addEventListener("keydown", keydownHandler, false);
+	btn_start.onclick = start;
+
+	// Main function
+	var main = function()
+	{
+		init();
+
+		draw();
+
+
+	};
+	main();
+
+
+	// assign default values of mins & secs
+	function init()
+	{
+		mins = mins_def;
+		secs = 0;
+
+	} // init
+
+	// put the values into html
+	function draw()
+	{
+		mins_container.innerHTML = mins < 10 ? "0" + mins : mins;
+		secs_container.innerHTML = secs < 10 ? "0" + secs : secs;
+	} // draw
+
+	
+
+	/**
+	 *
+	 * Functions to start, pause and reset the timer
+	 *
+	 */
+	function start()
+	{
+		timer_running = true;
+		interval_timer = setInterval(timer, 1000);
+	}
+
+	function pause()
+	{
+		timer_running = false;
+		clearInterval(interval_timer);
+	}
+
+	function reset()
+	{
+		timer_running = false;
+		clearInterval(interval_timer);
+
+		main();
+	}
+
+
+	/**
+	 *
+	 * Functions to increment, decrement the pomodoro timer
+	 *
+	 */
+	function inc_timer()
+	{
+		if (!timer_running && mins < 99)
+		{
+			++mins_def;
+			mins = mins_def;
+			draw();
+		}
+	}
+
+	function dec_timer()
+	 {
+	 	console.log("dec");
+	 	if (!timer_running && mins > 1)
+	 	{
+	 		--mins_def;
+	 		mins = mins_def;
+	 		draw();
+	 	}
+	 }
+	
+
+	/**
+	 *
+	 * Main fuction, which is responsible for adjusting time
+	 *
+	 */
+	function timer()
+	{
+		if (secs === 0)
+		{
+			if (mins === 0)
+				reset();
+			else
+			{
+				secs = 59;
+				--mins;
+			}
+
+		}
+		else
+			--secs;
+
+		draw();
+	} // timer
+
+
+	
+	// Handler function
+	function keydownHandler(event)
+	{
+		// 32 === Space Bar
+		if(event.keyCode === 32)
+		{
+			if (timer_running)
+				pause();
+			else
+				start();
+		}
+
+		// 13 === Enter Key
+		if (event.keyCode === 13)
+			reset();
+
+		// J || j
+		if (event.keyCode === 74 || event.keyCode === 106)
+			inc_timer();
+
+		if (event.keyCode === 75 || event.keyCode === 107)
+			dec_timer();
+
+	} // keydownHandler
+
+}());
