@@ -3,8 +3,10 @@
 	// elems
 	var mins_container = document.querySelector(".mins"),
 		secs_container = document.querySelector(".secs");
-
 	var btn_start = document.querySelector(".start");
+
+	// sound
+	var alarm = new Audio("audio/horn.mp3");
 
 
 	// Global vars
@@ -24,10 +26,7 @@
 	var main = function()
 	{
 		init();
-
 		draw();
-
-
 	};
 	main();
 
@@ -92,7 +91,6 @@
 
 	function dec_timer()
 	 {
-	 	console.log("dec");
 	 	if (!timer_running && mins > 1)
 	 	{
 	 		--mins_def;
@@ -112,7 +110,10 @@
 		if (secs === 0)
 		{
 			if (mins === 0)
+			{
 				reset();
+				alarm.play();
+			}
 			else
 			{
 				secs = 59;
