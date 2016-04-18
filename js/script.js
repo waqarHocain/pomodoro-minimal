@@ -2,7 +2,9 @@
 {
 	// elems
 	var mins_container = document.querySelector(".mins"),
-		secs_container = document.querySelector(".secs");
+		secs_container = document.querySelector(".secs"),
+		state = document.querySelector(".state");
+
 	var btn_start = document.querySelector(".start");
 
 	// sound
@@ -27,6 +29,8 @@
 	{
 		init();
 		draw();
+
+		state.innerHTML = "&nbsp";
 	};
 	main();
 
@@ -56,6 +60,7 @@
 	function start()
 	{
 		timer_running = true;
+		state.innerHTML = "<strong>It's Work time... Try more harder..</strong>"
 		interval_timer = setInterval(timer, 1000);
 	}
 
