@@ -13,12 +13,14 @@
 
 	// Global vars
 	var mins, secs = 0;
+	var mins_def = 1;
 	var interval_timer;
 
-	var mins_def = 1;
-
+	var mins_brk, mins_def_brk = 1;
+	var interval_brk;
 
 	var timer_running = false;
+
 
 	// bindings
 	window.addEventListener("keydown", keydownHandler, false);
@@ -118,6 +120,7 @@
 			{
 				reset();
 				alarm.play();
+				start_brk();
 			}
 			else
 			{
@@ -131,6 +134,73 @@
 
 		draw();
 	} // timer
+
+
+	/**
+	 *
+	 * Here goes the functions, which are related to BREAK TIME!
+	 *
+	 */
+
+	function main_brk()
+	{
+		init_brk();
+		draw_brk();
+	}
+
+	function init_brk()
+	{
+		mins_brk = mins_def_brk;
+		secs = 0;
+	}
+
+	function draw_brk()
+	{
+		mins_container.innerHTML = mins_brk < 10 ? "0" + mins_brk : mins_brk;
+		secs_container.innerHTML = secs < 10 ? "0" + secs : secs;
+	}
+
+	function start_brk()
+	{
+		main_brk();
+
+		timer_running = true;
+		state.innerHTML = "Be Relax....";
+		interval_brk = setInterval(timer_brk, 1000);
+	}
+
+	function stop_brk()
+	{
+		timer_running = false;
+		clearInterval(interval_brk);
+		state.innerHTML = "&nbsp";
+	}
+
+
+
+	function timer_brk()
+	{
+		if (secs === 0)
+		{
+			if (mins_brk === 0)
+			{
+				stop_brk();
+				start();
+				alarm.play();
+			}
+			else
+			{
+				secs = 59;
+				--mins_brk;
+			}
+
+		}
+		else
+			--secs;
+
+		draw_brk();
+	} // timer_brk
+
 
 
 	
