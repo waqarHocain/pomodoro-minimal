@@ -10,7 +10,7 @@
         body
         {
             text-align: center;
-            font-family: "Courier New", Courier, Consolas, serif;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -23,22 +23,17 @@
    <main>
    		<p class="time">
    			<span class="mins"></span> : <span class="secs"></span>
-
-        <br>
-        <button class="start">START</button>
    		</p>
 
       <p class="state"></p>
 
       <p class="default_values">
-        Default timer-time: <span class="timer_time"></span>
+         Work-time:  <span class="timer_time"></span> &nbsp;&nbsp;&nbsp;&nbsp; (up `J` | down `K`)
         <br>
-        Default break-time: <span class="break_time"></span>
+        Break-time: <span class="break_time"></span> &nbsp;&nbsp;&nbsp;&nbsp; (up `A` | down `S`)
+        <br>
+        Round: <span class="cycles"></span>
       </p>
-
-      <p class="instructions">Press `Space Bar` to start and pause, `J` to increment and `K` to decrement the timer.
-      <br>
-      Press `A` to increment and `S` to decrement the break-time.</p>
    </main>
 
 

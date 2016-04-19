@@ -3,12 +3,11 @@
 	// elems
 	var mins_container = document.querySelector(".mins"),
 		secs_container = document.querySelector(".secs"),
-		state = document.querySelector(".state");
+		state = document.querySelector(".state"),
+		cycles_container = document.querySelector(".cycles");
 
 	var timer_time = document.querySelector(".timer_time"),
 		break_time = document.querySelector(".break_time");
-
-	var btn_start = document.querySelector(".start");
 
 	// sound
 	var alarm = new Audio("audio/horn.mp3");
@@ -16,22 +15,24 @@
 
 	// Global vars
 	var mins, secs = 0;
-	var mins_def = 2;
+	var mins_def = 25;
 	var interval_timer;
 
-	var mins_brk, mins_def_brk = 1;
+	var mins_brk, mins_def_brk = 5;
 	var interval_brk;
+
+	var cycles = 1;
 
 	var timer_running = false;
 
 
 	break_time.innerHTML = mins_def_brk;
 	timer_time.innerHTML = mins_def;
+	cycles_container.innerHTML = cycles;
 
 
 	// bindings
 	window.addEventListener("keydown", keydownHandler, false);
-	btn_start.onclick = start;
 
 	// Main function
 	var main = function()
@@ -84,6 +85,7 @@
 	function reset()
 	{
 		timer_running = false;
+		cycles = 1;
 		clearInterval(interval_timer);
 
 		main();
@@ -222,6 +224,9 @@
 				stop_brk();
 				alarm.play();
 				setTimeout(start, 1000);
+
+				++cycles;
+				cycles_container.innerHTML = cycles <= 9 ? "0" + cycles : cycles;
 			}
 			else
 			{
