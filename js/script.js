@@ -5,6 +5,9 @@
 		secs_container = document.querySelector(".secs"),
 		state = document.querySelector(".state");
 
+	var timer_time = document.querySelector(".timer_time"),
+		break_time = document.querySelector(".break_time");
+
 	var btn_start = document.querySelector(".start");
 
 	// sound
@@ -13,13 +16,17 @@
 
 	// Global vars
 	var mins, secs = 0;
-	var mins_def = 1;
+	var mins_def = 2;
 	var interval_timer;
 
 	var mins_brk, mins_def_brk = 1;
 	var interval_brk;
 
 	var timer_running = false;
+
+
+	break_time.innerHTML = mins_def_brk;
+	timer_time.innerHTML = mins_def;
 
 
 	// bindings
@@ -61,6 +68,8 @@
 	 */
 	function start()
 	{
+		draw();
+
 		timer_running = true;
 		state.innerHTML = "<strong>It's Work time... Try more harder..</strong>"
 		interval_timer = setInterval(timer, 1000);
@@ -93,6 +102,7 @@
 			++mins_def;
 			mins = mins_def;
 			draw();
+			timer_time.innerHTML = mins_def;
 		}
 	}
 
@@ -103,6 +113,7 @@
 	 		--mins_def;
 	 		mins = mins_def;
 	 		draw();
+	 		timer_time.innerHTML = mins_def;
 	 	}
 	 }
 	
@@ -120,7 +131,7 @@
 			{
 				reset();
 				alarm.play();
-				start_brk();
+				setTimeout(start_brk, 1000);
 			}
 			else
 			{
@@ -141,6 +152,8 @@
 	 * Here goes the functions, which are related to BREAK TIME!
 	 *
 	 */
+
+	init_brk();	// assign mins_brk = mins_def_brk on start
 
 	function main_brk()
 	{
@@ -165,7 +178,7 @@
 		main_brk();
 
 		timer_running = true;
-		state.innerHTML = "Be Relax....";
+		state.innerHTML = "<strong>Be Relax....</strong>";
 		interval_brk = setInterval(timer_brk, 1000);
 	}
 
@@ -174,6 +187,28 @@
 		timer_running = false;
 		clearInterval(interval_brk);
 		state.innerHTML = "&nbsp";
+	}
+
+	function inc_brk()
+	{
+		if (!timer_running && mins_brk < 99)
+		{
+			++mins_def_brk;
+			mins_brk = mins_def_brk;
+
+			break_time.innerHTML = mins_def_brk;
+		}
+	}
+
+	function dec_brk()
+	{
+		if (!timer_running && mins_brk > 1)
+		{
+			--mins_def_brk;
+			mins_brk = mins_def_brk;
+
+			break_time.innerHTML = mins_brk;
+		}
 	}
 
 
@@ -185,8 +220,8 @@
 			if (mins_brk === 0)
 			{
 				stop_brk();
-				start();
 				alarm.play();
+				setTimeout(start, 1000);
 			}
 			else
 			{
@@ -224,8 +259,17 @@
 		if (event.keyCode === 74 || event.keyCode === 106)
 			inc_timer();
 
+		// K || k
 		if (event.keyCode === 75 || event.keyCode === 107)
 			dec_timer();
+
+		// A || a
+		if (event.keyCode === 65 || event.keyCode === 97)
+			inc_brk();
+
+		// S || s
+		if (event.keyCode === 83 || event.keyCode === 115)
+			dec_brk();
 
 	} // keydownHandler
 
