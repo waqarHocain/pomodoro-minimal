@@ -1,4 +1,9 @@
-(function() 
+/**
+  *	TODO:
+  * Fix the pause/start function, whenever you pause in the break, it starts from timer
+  */
+
+(function()
 {
 	// elems
 	var mins_container = document.querySelector(".mins"),
@@ -9,272 +14,228 @@
 	var timer_time = document.querySelector(".timer_time"),
 		break_time = document.querySelector(".break_time");
 
-	// sound
-	var alarm = new Audio("audio/horn.mp3");
-
-
-	// Global vars
-	var mins, secs = 0;
-	var mins_def = 25;
-	var interval_timer;
-
-	var mins_brk, mins_def_brk = 5;
-	var interval_brk;
-
-	var cycles = 1;
-
-	var timer_running = false;
-
-
-	break_time.innerHTML = mins_def_brk;
-	timer_time.innerHTML = mins_def;
-	cycles_container.innerHTML = cycles;
-
-
 	// bindings
 	window.addEventListener("keydown", keydownHandler, false);
 
-	// Main function
-	var main = function()
-	{
-		init();
-		draw();
+	// sound
+	var alarm = new Audio("audio/horn.mp3");
 
-		state.innerHTML = "&nbsp";
+	// Global vars
+	var interval,
+		cycles = 1,
+		timer_running = false;
+
+	// checks whether its work || break time.
+	// 1 === work && 0 === break | by default set to work
+	var running = 1;
+
+	var msg_work = "Work time... Try Hard...",
+		msg_break = "Relax... Enjoy the moment";
+
+
+	var Clock = function(mins, def)
+	{
+		this.mins = mins;
+		this.secs = 0;
+		this.mins_def = def;
 	};
-	main();
 
 
-	// assign default values of mins & secs
-	function init()
+	Clock.prototype.init = 	function()
 	{
-		mins = mins_def;
-		secs = 0;
+		this.mins = this.mins_def;
+		this.secs = 0;
+	};
 
-	} // init
-
-	// put the values into html
-	function draw()
+	Clock.prototype.draw = function()
 	{
-		mins_container.innerHTML = mins < 10 ? "0" + mins : mins;
-		secs_container.innerHTML = secs < 10 ? "0" + secs : secs;
-	} // draw
+		mins_container.innerHTML = pad_two(this.mins);
+		secs_container.innerHTML = pad_two(this.secs);
+	}
 
-	
-
-	/**
-	 *
-	 * Functions to start, pause and reset the timer
-	 *
-	 */
-	function start()
+	Clock.prototype.start = function(msg)
 	{
-		draw();
+		var self = this;
+		this.draw();
 
 		timer_running = true;
-		state.innerHTML = "<strong>It's Work time... Try more harder..</strong>"
-		interval_timer = setInterval(timer, 1000);
-	}
+		state.innerHTML = msg;
 
-	function pause()
+		interval = setInterval( function() { timer(self); }, 1000);
+	};
+
+	Clock.prototype.pause = function () {
+		if (running === 1)
+		{
+			timer_running = false;
+			state.innerHTML = "PAUSED!!!";
+			clearInterval(interval);
+		}
+		else
+			return;
+	};
+
+	Clock.prototype.inc = function () {
+		if (!timer_running && this.mins < 99)
+		{
+			++this.mins_def;
+			this.mins = this.mins_def;
+
+			update_state();
+			update_screen(mins_container, _timer.mins_def);
+		}
+	};
+
+	Clock.prototype.dec = function () {
+		if (!timer_running && this.mins > 1)
+		{
+			--this.mins_def;
+			this.mins = this.mins_def;
+
+			update_state();
+			update_screen(mins_container, _timer.mins_def);
+		}
+	};
+
+
+	var _timer = new Clock(25, 25), // mins, default_mins
+		_break = new Clock(5, 5); 	// mins, default_mins
+
+	// initial setup
+	cycles_container.innerHTML = pad_two(cycles);
+	state.innerHTML = "&nbsp;";
+	_timer.init();
+	_timer.draw();
+
+	update_state();
+
+	// Fucntions _-_-_-_-
+	function timer(obj)
 	{
-		timer_running = false;
-		clearInterval(interval_timer);
-	}
+		if (obj.secs === 0)
+		{
+			if (obj.mins === 0)
+			{
+				stop();
+				alarm.play();
+				switch_segment();
+				return;
+			}
+			else
+			{
+				obj.secs = 59;
+				--obj.mins;
+			}
+
+		}
+		else
+			--obj.secs;
+
+		obj.draw();
+	} // timer
 
 	function reset()
 	{
+		running = 1;
 		timer_running = false;
-		cycles = 1;
-		clearInterval(interval_timer);
+		state.innerHTML = "&nbsp;";
+		clearInterval(interval);
 
-		main();
-	}
+		_timer.init();
+		_break.init();
 
+		// draw work_time on screen
+		_timer.draw();
+	} // reset
 
-	/**
-	 *
-	 * Functions to increment, decrement the pomodoro timer
-	 *
-	 */
-	function inc_timer()
+	function stop()
 	{
-		if (!timer_running && mins < 99)
-		{
-			++mins_def;
-			mins = mins_def;
-			draw();
-			timer_time.innerHTML = mins_def;
-		}
-	}
+		clearInterval(interval);
+		_timer.init();
+		_break.init();
+	} // stop
 
-	function dec_timer()
-	 {
-	 	if (!timer_running && mins > 1)
-	 	{
-	 		--mins_def;
-	 		mins = mins_def;
-	 		draw();
-	 		timer_time.innerHTML = mins_def;
-	 	}
-	 }
-	
-
-	/**
-	 *
-	 * Main fuction, which is responsible for adjusting time
-	 *
-	 */
-	function timer()
+	// change the timer to work || break time
+	function switch_segment()
 	{
-		if (secs === 0)
-		{
-			if (mins === 0)
-			{
-				reset();
-				alarm.play();
-				setTimeout(start_brk, 1000);
-			}
-			else
-			{
-				secs = 59;
-				--mins;
-			}
-
-		}
+		if (running === 1)
+			switch_to_break();
 		else
-			--secs;
-
-		draw();
-	} // timer
-
-
-	/**
-	 *
-	 * Here goes the functions, which are related to BREAK TIME!
-	 *
-	 */
-
-	init_brk();	// assign mins_brk = mins_def_brk on start
-
-	function main_brk()
-	{
-		init_brk();
-		draw_brk();
+			switch_to_work();
 	}
 
-	function init_brk()
+	function switch_to_break()
 	{
-		mins_brk = mins_def_brk;
-		secs = 0;
+		update_screen(mins_container, _break.mins_def);
+		running = 0;
+		_break.start(msg_break);
 	}
 
-	function draw_brk()
+	function switch_to_work()
 	{
-		mins_container.innerHTML = mins_brk < 10 ? "0" + mins_brk : mins_brk;
-		secs_container.innerHTML = secs < 10 ? "0" + secs : secs;
-	}
+		update_screen(mins_container, _timer.mins_def);
 
-	function start_brk()
-	{
-		main_brk();
+		++cycles;
+		running = 1;
+		_timer.start(msg_work);
 
-		timer_running = true;
-		state.innerHTML = "<strong>Be Relax....</strong>";
-		interval_brk = setInterval(timer_brk, 1000);
-	}
-
-	function stop_brk()
-	{
-		timer_running = false;
-		clearInterval(interval_brk);
-		state.innerHTML = "&nbsp";
-	}
-
-	function inc_brk()
-	{
-		if (!timer_running && mins_brk < 99)
-		{
-			++mins_def_brk;
-			mins_brk = mins_def_brk;
-
-			break_time.innerHTML = mins_def_brk;
-		}
-	}
-
-	function dec_brk()
-	{
-		if (!timer_running && mins_brk > 1)
-		{
-			--mins_def_brk;
-			mins_brk = mins_def_brk;
-
-			break_time.innerHTML = mins_brk;
-		}
+		// cycles has been changed, so update the state section
+		update_state();
 	}
 
 
-
-	function timer_brk()
+	// update screen on changes in data
+	function update_state()
 	{
-		if (secs === 0)
-		{
-			if (mins_brk === 0)
-			{
-				stop_brk();
-				alarm.play();
-				setTimeout(start, 1000);
+	    timer_time.innerHTML = pad_two(_timer.mins_def);
+	    break_time.innerHTML = pad_two(_break.mins_def);
+		cycles_container.innerHTML = pad_two(cycles);
+	}
 
-				++cycles;
-				cycles_container.innerHTML = cycles <= 9 ? "0" + cycles : cycles;
-			}
-			else
-			{
-				secs = 59;
-				--mins_brk;
-			}
-
-		}
-		else
-			--secs;
-
-		draw_brk();
-	} // timer_brk
+	function update_screen(container, val)
+	{
+		container.innerHTML = pad_two(val);
+	}
 
 
+	// pad a value with a leading zero
+	function pad_two(val)
+	{
+		return val <= 9 ? "0" + val: val;
+	}
 
-	
-	// Handler function
+
+	// Execute function associated with particular key
 	function keydownHandler(event)
 	{
 		// 32 === Space Bar
 		if(event.keyCode === 32)
 		{
 			if (timer_running)
-				pause();
+				_timer.pause();
 			else
-				start();
+				_timer.start(msg_work);
 		}
 
 		// 13 === Enter Key
 		if (event.keyCode === 13)
-			reset();
+		    reset();
 
 		// J || j
 		if (event.keyCode === 74 || event.keyCode === 106)
-			inc_timer();
+		    _timer.inc();
 
 		// K || k
 		if (event.keyCode === 75 || event.keyCode === 107)
-			dec_timer();
+		    _timer.dec();
 
 		// A || a
 		if (event.keyCode === 65 || event.keyCode === 97)
-			inc_brk();
+		    _break.inc();
 
 		// S || s
 		if (event.keyCode === 83 || event.keyCode === 115)
-			dec_brk();
+		    _break.dec();
 
 	} // keydownHandler
 
