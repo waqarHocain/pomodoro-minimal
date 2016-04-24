@@ -136,6 +136,7 @@
 
 	function reset()
 	{
+		cycles = 1;
 		running = 1;
 		timer_running = false;
 		state.innerHTML = "&nbsp;";
@@ -146,6 +147,8 @@
 
 		// draw work_time on screen
 		_timer.draw();
+
+		update_state();
 	} // reset
 
 	function stop()
