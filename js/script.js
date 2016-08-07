@@ -3,8 +3,7 @@
   * Fix the pause/start function, whenever you pause in the break, it starts from timer
   */
 
-(function()
-{
+(function() {
 	// elems
 	var mins_container = document.querySelector(".mins"),
 		secs_container = document.querySelector(".secs"),
@@ -33,28 +32,24 @@
 		msg_break = "Relax... Enjoy the moment";
 
 
-	var Clock = function(mins, def)
-	{
+	var Clock = function(mins, def) {
 		this.mins = mins;
 		this.secs = 0;
 		this.mins_def = def;
 	};
 
 
-	Clock.prototype.init = 	function()
-	{
+	Clock.prototype.init = 	function() {
 		this.mins = this.mins_def;
 		this.secs = 0;
 	};
 
-	Clock.prototype.draw = function()
-	{
+	Clock.prototype.draw = function() {
 		mins_container.innerHTML = pad_two(this.mins);
 		secs_container.innerHTML = pad_two(this.secs);
 	}
 
-	Clock.prototype.start = function(msg)
-	{
+	Clock.prototype.start = function(msg) {
 		var self = this;
 		this.draw();
 
@@ -65,8 +60,7 @@
 	};
 
 	Clock.prototype.pause = function () {
-		if (running === 1)
-		{
+		if (running === 1) {
 			timer_running = false;
 			state.innerHTML = "PAUSED!!!";
 			clearInterval(interval);
@@ -76,8 +70,7 @@
 	};
 
 	Clock.prototype.inc = function () {
-		if (!timer_running && this.mins < 99)
-		{
+		if (!timer_running && this.mins < 99 && running !== 1) {
 			++this.mins_def;
 			this.mins = this.mins_def;
 
@@ -87,8 +80,7 @@
 	};
 
 	Clock.prototype.dec = function () {
-		if (!timer_running && this.mins > 1)
-		{
+		if (!timer_running && this.mins > 1 && running !== 1) {
 			--this.mins_def;
 			this.mins = this.mins_def;
 
@@ -110,19 +102,15 @@
 	update_state();
 
 	// Fucntions _-_-_-_-
-	function timer(obj)
-	{
-		if (obj.secs === 0)
-		{
-			if (obj.mins === 0)
-			{
+	function timer(obj) {
+		if (obj.secs === 0) {
+			if (obj.mins === 0) {
 				stop();
 				alarm.play();
 				switch_segment();
 				return;
 			}
-			else
-			{
+			else {
 				obj.secs = 59;
 				--obj.mins;
 			}
@@ -134,8 +122,7 @@
 		obj.draw();
 	} // timer
 
-	function reset()
-	{
+	function reset() {
 		cycles = 1;
 		running = 1;
 		timer_running = false;
@@ -146,36 +133,31 @@
 		_break.init();
 
 		// draw work_time on screen
-		_timer.draw();
-
+		_timer.draw()
 		update_state();
 	} // reset
 
-	function stop()
-	{
+	function stop() {
 		clearInterval(interval);
 		_timer.init();
 		_break.init();
 	} // stop
 
 	// change the timer to work || break time
-	function switch_segment()
-	{
+	function switch_segment() {
 		if (running === 1)
 			switch_to_break();
 		else
 			switch_to_work();
 	}
 
-	function switch_to_break()
-	{
+	function switch_to_break() {
 		update_screen(mins_container, _break.mins_def);
 		running = 0;
 		_break.start(msg_break);
 	}
 
-	function switch_to_work()
-	{
+	function switch_to_work() {
 		update_screen(mins_container, _timer.mins_def);
 
 		++cycles;
@@ -188,32 +170,27 @@
 
 
 	// update screen on changes in data
-	function update_state()
-	{
+	function update_state() {
 	    timer_time.innerHTML = pad_two(_timer.mins_def);
 	    break_time.innerHTML = pad_two(_break.mins_def);
 		cycles_container.innerHTML = pad_two(cycles);
 	}
 
-	function update_screen(container, val)
-	{
+	function update_screen(container, val) {
 		container.innerHTML = pad_two(val);
 	}
 
 
 	// pad a value with a leading zero
-	function pad_two(val)
-	{
+	function pad_two(val) {
 		return val <= 9 ? "0" + val: val;
 	}
 
 
 	// Execute function associated with particular key
-	function keydownHandler(event)
-	{
+	function keydownHandler(event) {
 		// 32 === Space Bar
-		if(event.keyCode === 32)
-		{
+		if(event.keyCode === 32) {
 			if (timer_running)
 				_timer.pause();
 			else
