@@ -70,7 +70,7 @@
 	};
 
 	Clock.prototype.inc = function () {
-		if (!timer_running && this.mins < 99 && running !== 1) {
+		if (!timer_running && this.mins < 99 && state.innerHTML !== "PAUSED!!!") {
 			++this.mins_def;
 			this.mins = this.mins_def;
 
@@ -80,7 +80,7 @@
 	};
 
 	Clock.prototype.dec = function () {
-		if (!timer_running && this.mins > 1 && running !== 1) {
+		if (!timer_running && this.mins > 1 && state.innerHTML !== "PAUSED!!!") {
 			--this.mins_def;
 			this.mins = this.mins_def;
 
