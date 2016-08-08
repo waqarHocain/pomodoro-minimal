@@ -12,12 +12,16 @@
             text-align: center;
             font-family: monospace;
         }
+        .default_values
+        {
+          margin-top: 25px;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Howdy, Mastan!</h1>
+        <h1>Howdy!</h1>
     </header>
 
    <main>
@@ -27,13 +31,12 @@
 
       <p class="state"></p>
 
+      <p class="instructions">Press <code>Space Bar</code> to <strong>Start</strong> / <strong>Pause</strong> the timer <br> Press <code>Enter</code> key to <strong>Reset</strong> the timer</p>
+
       <p class="default_values">
-         Press `Space Bar` to Start / Pause the timer
-         <br>
-         <br>
-         Work-time:  <span class="timer_time"></span> &nbsp;&nbsp;&nbsp;&nbsp; (up `J` | down `K`)
+         Work-time:  <span class="timer_time"></span> &nbsp;&nbsp;&nbsp;&nbsp; (up <code>J</code> | down <code>K</code>)
         <br>
-        Break-time: <span class="break_time"></span> &nbsp;&nbsp;&nbsp;&nbsp; (up `A` | down `S`)
+        Break-time: <span class="break_time"></span> &nbsp;&nbsp;&nbsp;&nbsp; (up <code>A</code> | down <code>S</code>)
         <br>
         <br>
         Round: <span class="cycles"></span>
